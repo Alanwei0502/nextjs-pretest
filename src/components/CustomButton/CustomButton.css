@@ -1,0 +1,27 @@
+.button {
+  font-size: 1rem;
+  background-color: white;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+  border-radius: 0.2rem;
+  outline: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: 0.3s ease;
+}
+
+.button:hover {
+  background-color: #b3e1ff;
+}
+
+.button:disabled {
+  opacity: 0.2;
+  color: var(--text-primary-color);
+  border-color: var(--text-primary-color);
+  cursor: not-allowed;
+}
+.button:disabled:hover {
+  background-color: white;
+}

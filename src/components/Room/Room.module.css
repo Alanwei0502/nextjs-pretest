@@ -1,0 +1,27 @@
+.room {
+  border-bottom: 1px solid var(--border-light-color);
+  padding: 0.5rem 0;
+}
+
+.room:last-child {
+  border-bottom: none;
+}
+
+.total_guest {
+  margin: 0;
+  font-size: large;
+  padding-bottom: 1rem;
+  font-weight: 500;
+}
+
+.guest_type {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.guest_title > p:nth-child(2) {
+  color: var(--text-third-color);
+}
