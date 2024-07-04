@@ -18,15 +18,12 @@ export function getDefaultRoomAllocation(
 
   for (let i = 0; i < rooms.length; i++) {
     const room = rooms[i];
-    for (let adult = 0; adult <= guest.adult; adult++) {
+    for (let adult = 1; adult <= guest.adult; adult++) {
       for (let child = 0; child <= guest.child; child++) {
-        // 如果有小孩的房間沒有大人，就不考慮
-        if (child > 0 && adult === 0) continue;
-
         // 如果大人和小孩的總數超過房間的容量，就不考慮
-        if (adult + child > room.capacity) continue;
+        if (adult + child > room.capacity) break;
 
-        // 如果目前沒有該房間的組合，就新增一個空陣列
+        // 如果目前沒有該房間，就新增一個
         if (!allAllocationCombination[i]) {
           allAllocationCombination[i] = [];
         }
@@ -42,21 +39,14 @@ export function getDefaultRoomAllocation(
   }
 
   // 2. 找出正確人數的房間組合
-  const possiblePrice: number[] = [];
+  let minPrice: number = Infinity;
   const possibleAllocation: { [totalPrice: number]: IAllocationRoom[] }[] = [];
 
   // 使用遞迴找出最佳組合
   function findBestAllocation(
-    currentRoomIndex: number,
-    currentAllocation: IAllocationRoom[]
+    currentRoomIndex: number = 0,
+    currentAllocation: IAllocationRoom[] = []
   ) {
-    // 如果有房間沒人住，就不考慮
-    if (
-      currentAllocation.find((room) => room.adult === 0 && room.child === 0)
-    ) {
-      return;
-    }
-
     if (currentRoomIndex === rooms.length) {
       // 如果已遍歷完最後一個房間，就計算價格
       const [totalAdult, totalChild, totalPrice] = currentAllocation.reduce(
@@ -69,7 +59,9 @@ export function getDefaultRoomAllocation(
       );
       // 如果大人和小孩的總數不等於原本的人數，就不考慮
       if (totalAdult !== guest.adult || totalChild !== guest.child) return;
-      possiblePrice.push(totalPrice);
+      if (totalPrice < minPrice) {
+        minPrice = totalPrice;
+      }
       possibleAllocation.push({ [totalPrice]: currentAllocation });
       return;
     }
@@ -81,16 +73,22 @@ export function getDefaultRoomAllocation(
     }
   }
 
-  findBestAllocation(0, []);
+  findBestAllocation();
 
   // 3. 找出可能最佳組合
-  const minPrice = Math.min(...possiblePrice);
-  const bestAllocation: IAllocationRoom[][] = [];
+  const result: IAllocationRoom[][] = [];
   possibleAllocation.forEach((a) => {
     if (a.hasOwnProperty(minPrice)) {
-      bestAllocation.push(a[minPrice]);
+      result.push(a[minPrice]);
     }
   });
 
-  return bestAllocation;
+  console.log({
+    allAllocationCombination,
+    minPrice,
+    possibleAllocation,
+    result,
+  });
+
+  return result;
 }
